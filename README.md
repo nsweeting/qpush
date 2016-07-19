@@ -76,7 +76,7 @@ The job above would be equivalent to running the following command on the server
 Example::Job.new(example: 'Job').call
 ```
 
-At a minimum, we must provide the job with a 'klass'. There are many more options that we can provide to the job though - all of which can be viewed here (to come).
+At a minimum, we must provide the job with a 'klass'. There are many more options that we can provide to the job though - [all of which can be viewed here](https://github.com/nsweeting/qpush/wiki/Options-for-Jobs).
 
 #### Building Jobs
 
