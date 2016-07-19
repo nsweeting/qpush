@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'qpush/server'
+
+server = QPush::Server::Launcher.new(ARGV)
+server.start

@@ -1,0 +1,1 @@
+exec( "bundle exec rackup lib/qpush/web/server.ru" )

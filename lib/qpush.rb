@@ -1,0 +1,2 @@
+# Base
+require 'qpush/base'
