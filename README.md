@@ -33,9 +33,12 @@ In order to process queued jobs, we run the QPush server. This is a separate ser
 
     $ bundle exec qpush-server -c path/to/config.rb
 
-By providing a path to a configuration file, we can setup QPush with plain old ruby. At a minimum, we should provide details on our Redis server and connections. There are more configuration options available - all of which can be viewed here (to come).
+By providing a path to a configuration file, we can setup QPush with plain old ruby. At a minimum, we should provide details on our Redis server and connections. There are more configuration options available - all of which can be viewed here (to come). Remember to 'require' the files that contain your jobs as well!
 
 ```ruby
+#We must require our jobs from the config file, otherwise QPush will not be able to access them.
+require_relative 'jobs/my_jobs'
+
 # QPush server configuration
 QPush.configure do |config|
   # Your redis server url and number of connections to provide
