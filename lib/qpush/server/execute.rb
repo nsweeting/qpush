@@ -39,13 +39,17 @@ module QPush
       end
 
       def call
-        @job.bump_fail
-        @job.api.retry if @job.retry_job?
+        update_job
         stat_increment
         log_error
       end
 
       private
+
+      def update_job
+        @job.bump_fail
+        @job.api.retry if @job.retry_job?
+      end
 
       def stat_increment
         QPush.redis.with do |c|
@@ -70,13 +74,17 @@ module QPush
       end
 
       def call
-        @job.bump_success
-        @job.api.delay if @job.delay_job?
+        update_job
         stat_increment
         log_success
       end
 
       private
+
+      def update_job
+        @job.bump_success
+        @job.api.delay if @job.delay_job?
+      end
 
       def stat_increment
         QPush.redis.with do |c|

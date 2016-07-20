@@ -44,29 +44,15 @@ module QPush
       end
     end
 
-    class Job
-      include QPush::Job::Base
+    class Job < QPush::Job::Base
       include QPush::Server::JobHelpers
       include ObjectValidator::Validate
 
-      attr_accessor :klass, :id, :priority, :created_at, :start_at,
-                    :cron, :retry_max, :total_success, :total_fail,
-                    :run_time
-      attr_reader :args, :api
+      attr_reader :api
 
-      def initialize(options = {})
-        options = defaults.merge(options)
-        options.each { |key, value| send("#{key}=", value) }
+      def initialize(options)
+        super
         @api = JobApi.new(self)
-      end
-
-      def args=(args)
-        @args =
-          if args.is_a?(String) then JSON.parse(args)
-          else args
-          end
-      rescue JSON::ParserError
-        @args = nil
       end
     end
 
@@ -94,13 +80,6 @@ module QPush
         @config = QPush.config
       end
 
-      def delay
-        QPush.redis.with do |conn|
-          conn.incr("#{@config.stats_namespace}:delayed")
-          conn.zadd(@config.delay_namespace, @job.delay_until, @job.to_json)
-        end
-      end
-
       def queue
         QPush.redis.with do |conn|
           conn.incr("#{@config.stats_namespace}:queued")
@@ -120,11 +99,12 @@ module QPush
         end
       end
 
+      def delay
+        send_to_delay('delayed', @job.delay_until)
+      end
+
       def retry
-        QPush.redis.with do |conn|
-          conn.incr("#{@config.stats_namespace}:retries")
-          conn.zadd(@config.delay_namespace, @job.retry_at, @job.to_json)
-        end
+        send_to_delay('retries', @job.retry_at)
       end
 
       def setup
@@ -133,6 +113,15 @@ module QPush
         delay if @job.delay_job?
       rescue
         raise ServerError, 'Invalid job: ' + @job.errors.full_messages.join(' ')
+      end
+
+      private
+
+      def send_to_delay(stat, time)
+        QPush.redis.with do |conn|
+          conn.incr("#{@config.stats_namespace}:#{stat}")
+          conn.zadd(@config.delay_namespace, time, @job.to_json)
+        end
       end
     end
   end

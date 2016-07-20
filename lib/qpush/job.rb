@@ -1,7 +1,7 @@
 module QPush
   class << self
     def job(options)
-      job = Job::Wrapper.new(options)
+      job = Job::ClientWrapper.new(options)
       job.queue
     end
   end
@@ -19,7 +19,26 @@ module QPush
       end
     end
 
-    module Base
+    class Base
+      attr_accessor :klass, :id, :priority, :created_at, :start_at,
+                    :cron, :retry_max, :total_success, :total_fail,
+                    :run_time
+      attr_reader :args
+
+      def initialize(options = {})
+        options = defaults.merge(options)
+        options.each { |key, value| send("#{key}=", value) }
+      end
+
+      def args=(args)
+        @args =
+          if args.is_a?(String) then JSON.parse(args)
+          else args
+          end
+      rescue JSON::ParserError
+        @args = nil
+      end
+
       def to_json
         { klass: @klass,
           id: @id,
@@ -49,18 +68,7 @@ module QPush
       end
     end
 
-    class Wrapper
-      include QPush::Job::Base
-
-      attr_accessor :klass, :id, :priority, :created_at, :start_at,
-                    :cron, :retry_max, :total_success, :total_fail,
-                    :args
-
-      def initialize(options = {})
-        options = defaults.merge(options)
-        options.each { |key, value| send("#{key}=", value) }
-      end
-
+    class ClientWrapper < QPush::Job::Base
       def queue
         QPush.redis.with do |conn|
           conn.incr("#{QPush.config.stats_namespace}:queued")
