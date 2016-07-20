@@ -22,20 +22,17 @@ module QPush
       redis_pool: 10,
       database_pool: 10,
       workers: 2,
-      stats_namespace: 'qpush:v1:stats',
+      namespace: 'default',
       queue_threads: 2,
-      queue_namespace: 'qpush:v1:queue',
       perform_threads: 2,
-      perform_namespace: 'qpush:v1:perform',
-      delay_threads:1,
-      delay_namespace: 'qpush:v1:delay',
-      priorities: 5
+      delay_threads: 1,
+      priorities: 5,
+      jobs_path: '/jobs'
     }.freeze
 
-    attr_accessor :workers, :queue_threads, :queue_namespace, :delay_threads,
-                  :delay_namespace, :perform_threads, :perform_namespace,
-                  :stats_namespace, :redis_url, :redis_pool, :priorities,
-                  :database_url, :database_pool, :database_adapter
+    attr_accessor :workers, :queue_threads, :namespace, :delay_threads,
+                  :perform_threads, :redis_url, :redis_pool, :priorities,
+                  :database_url, :database_pool, :jobs_path
 
     def initialize
       DEFAULTS.each { |key, value| send("#{key}=", value) }
@@ -61,6 +58,22 @@ module QPush
         size: redis_pool,
         url: redis_url
       }
+    end
+
+    def delay_namespace
+      @delay_namespace ||= "qpush:v1:#{@namespace}:delay"
+    end
+
+    def queue_namespace
+      @queue_namespace ||= "qpush:v1:#{@namespace}:queue"
+    end
+
+    def perform_namespace
+      @perform_namespace ||= "qpush:v1:#{@namespace}:perform"
+    end
+
+    def stats_namespace
+      @stats_namespace ||= "qpush:v1:#{@namespace}:stats"
     end
 
     def perform_lists

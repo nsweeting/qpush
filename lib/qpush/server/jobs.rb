@@ -77,13 +77,12 @@ module QPush
     class JobApi
       def initialize(job)
         @job = job
-        @config = QPush.config
       end
 
       def queue
         QPush.redis.with do |conn|
-          conn.incr("#{@config.stats_namespace}:queued")
-          conn.lpush("#{@config.queue_namespace}", @job.to_json)
+          conn.incr("#{QPush.config.stats_namespace}:queued")
+          conn.lpush("#{QPush.config.queue_namespace}", @job.to_json)
         end
       end
 
@@ -94,8 +93,8 @@ module QPush
 
       def perform
         QPush.redis.with do |conn|
-          conn.incr("#{@config.stats_namespace}:performed")
-          conn.lpush("#{@config.perform_namespace}:#{@job.priority}", @job.to_json)
+          conn.incr("#{QPush.config.stats_namespace}:performed")
+          conn.lpush("#{QPush.config.perform_namespace}:#{@job.priority}", @job.to_json)
         end
       end
 
@@ -119,8 +118,8 @@ module QPush
 
       def send_to_delay(stat, time)
         QPush.redis.with do |conn|
-          conn.incr("#{@config.stats_namespace}:#{stat}")
-          conn.zadd(@config.delay_namespace, time, @job.to_json)
+          conn.incr("#{QPush.config.stats_namespace}:#{stat}")
+          conn.zadd(QPush.config.delay_namespace, time, @job.to_json)
         end
       end
     end

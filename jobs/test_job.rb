@@ -1,5 +1,5 @@
 class TestJob
   def call
-    puts 'hello'
+    puts 'Hello from TestJob'
   end
 end

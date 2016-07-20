@@ -12,6 +12,7 @@ module QPush
       def start
         start_message
         setup_options
+        require_jobs
         boot_manager
       end
 
@@ -36,6 +37,12 @@ module QPush
           o.on('-h', '--help', 'Prints this help') { puts o && exit }
         end
         parser.parse!(@argv)
+      end
+
+      def require_jobs
+        Dir[Dir.pwd + "#{QPush.config.jobs_path}/**/*.rb"].each do |file|
+          require file
+        end
       end
 
       def boot_manager

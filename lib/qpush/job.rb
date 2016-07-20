@@ -22,7 +22,7 @@ module QPush
     class Base
       attr_accessor :klass, :id, :priority, :created_at, :start_at,
                     :cron, :retry_max, :total_success, :total_fail,
-                    :run_time
+                    :run_time, :namespace
       attr_reader :args
 
       def initialize(options = {})
@@ -63,16 +63,16 @@ module QPush
           cron: '',
           retry_max: 10,
           total_fail: 0,
-          total_success: 0
-        }
+          total_success: 0,
+          namespace: QPush.config.namespace }
       end
     end
 
     class ClientWrapper < QPush::Job::Base
       def queue
         QPush.redis.with do |conn|
-          conn.incr("#{QPush.config.stats_namespace}:queued")
-          conn.lpush("#{QPush.config.queue_namespace}", to_json)
+          conn.incr("qpush:v1:#{@namespace}:stats:queued")
+          conn.lpush("qpush:v1:#{@namespace}:queue", to_json)
         end
       end
     end
