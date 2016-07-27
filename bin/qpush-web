@@ -1,1 +1,7 @@
-exec( "bundle exec rackup lib/qpush/web/server.ru" )
+#!/usr/bin/env ruby
+
+require 'qpush/web'
+
+#Rack::Handler::Puma.run QPush::Web::Server
+
+exec('bundle exec rackup lib/qpush/web/server.ru')

@@ -59,25 +59,5 @@ module QPush
         url: redis_url
       }
     end
-
-    def delay_namespace
-      @delay_namespace ||= "qpush:v1:#{@namespace}:delay"
-    end
-
-    def queue_namespace
-      @queue_namespace ||= "qpush:v1:#{@namespace}:queue"
-    end
-
-    def perform_namespace
-      @perform_namespace ||= "qpush:v1:#{@namespace}:perform"
-    end
-
-    def stats_namespace
-      @stats_namespace ||= "qpush:v1:#{@namespace}:stats"
-    end
-
-    def perform_lists
-      (1..priorities).collect { |num| "#{perform_namespace}:#{num}" }
-    end
   end
 end

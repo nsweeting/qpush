@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency     "object_validator"
   spec.add_runtime_dependency     "sequel", "~> 4.18"
   spec.add_runtime_dependency     "sinatra", "~> 1.4"
+  spec.add_runtime_dependency     "sinatra-cross_origin"
   spec.add_runtime_dependency     "parse-cron", "~> 0.1"
   spec.add_development_dependency "byebug"
   spec.add_development_dependency "bundler", "~> 1.12"

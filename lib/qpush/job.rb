@@ -9,13 +9,11 @@ module QPush
   module Job
     class << self
       def included(base)
-        base.extend(ClassMethods)
+        _register_job(base)
       end
-    end
 
-    module ClassMethods
-      def queue(options)
-        QPush.job(options.merge(klass: name))
+      def _register_job(base)
+        QPush.redis.with { |c| c.sadd(QPush.keys.jobs, base.name) }
       end
     end
 
@@ -23,7 +21,7 @@ module QPush
       attr_accessor :klass, :id, :priority, :created_at, :start_at,
                     :cron, :retry_max, :total_success, :total_fail,
                     :run_time, :namespace
-      attr_reader :args
+      attr_reader :args, :failed
 
       def initialize(options = {})
         options = defaults.merge(options)
@@ -39,6 +37,10 @@ module QPush
         @args = nil
       end
 
+      def failed=(failed)
+        @failed = failed == 'true' || failed == true
+      end
+
       def to_json
         { klass: @klass,
           id: @id,
@@ -49,6 +51,7 @@ module QPush
           retry_max: @retry_max,
           total_fail: @total_fail,
           total_success: @total_success,
+          failed: @failed,
           args: @args }.to_json
       end
 
@@ -64,6 +67,7 @@ module QPush
           retry_max: 10,
           total_fail: 0,
           total_success: 0,
+          failed: false,
           namespace: QPush.config.namespace }
       end
     end
@@ -71,7 +75,7 @@ module QPush
     class ClientWrapper < QPush::Job::Base
       def queue
         QPush.redis.with do |conn|
-          conn.incr("qpush:v1:#{@namespace}:stats:queued")
+          conn.hincrby("qpush:v1:#{@namespace}:stats", 'queued', 1)
           conn.lpush("qpush:v1:#{@namespace}:queue", to_json)
         end
       end

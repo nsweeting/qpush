@@ -12,7 +12,7 @@ module QPush
       def start
         start_message
         setup_options
-        require_jobs
+        setup_jobs
         boot_manager
       end
 
@@ -39,10 +39,10 @@ module QPush
         parser.parse!(@argv)
       end
 
-      def require_jobs
-        Dir[Dir.pwd + "#{QPush.config.jobs_path}/**/*.rb"].each do |file|
-          require file
-        end
+      # Requires all base jobs as well as user jobs.
+      #
+      def setup_jobs
+        Loader.call
       end
 
       def boot_manager

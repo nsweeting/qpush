@@ -56,6 +56,7 @@ module QPush
         @perform_threads.times { @workers << Perform.new }
         @queue_threads.times { @workers << Queue.new }
         @delay_threads.times { @workers << Delay.new }
+        @workers << Heartbeat.new
       end
 
       # Information about the start process

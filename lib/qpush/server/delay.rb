@@ -22,7 +22,7 @@ module QPush
         end
       end
 
-      # Shutsdown our dleay process.
+      # Shutsdown our delay process.
       #
       def shutdown
         @done = true
@@ -34,7 +34,7 @@ module QPush
       # If any are found, begin to update them.
       #
       def retrieve_delays
-        delays = @conn.zrangebyscore(QPush.config.delay_namespace, 0, Time.now.to_i)
+        delays = @conn.zrangebyscore(QPush.keys.delay, 0, Time.now.to_i)
         delays.any? ? update_delays(delays) : @conn.unwatch
       end
 
@@ -42,7 +42,7 @@ module QPush
       #
       def update_delays(delays)
         @conn.multi do |multi|
-          multi.zrem(QPush.config.delay_namespace, delays)
+          multi.zrem(QPush.keys.delay, delays)
           delays.each { |job| perform_job(job) }
         end
       end
@@ -51,7 +51,7 @@ module QPush
       #
       def perform_job(json)
         job = Job.new(JSON.parse(json))
-        job.api.perform
+        job.perform
       rescue => e
         raise ServerError, e.message
       end
@@ -59,7 +59,7 @@ module QPush
       # Performs a watch on our delay list
       #
       def watch_delay
-        @conn.watch(QPush.config.delay_namespace) do
+        @conn.watch(QPush.keys.delay) do
           yield if block_given?
         end
       end

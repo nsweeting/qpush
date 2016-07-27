@@ -6,7 +6,7 @@ module QPush
     class Perform
       def initialize
         @done = false
-        @lists = QPush.config.perform_lists
+        @lists = QPush.keys.perform_lists
       end
 
       # Starts our perform process. This will run until instructed to stop.
@@ -14,7 +14,7 @@ module QPush
       def start
         until @done
           job = retrieve_job
-          job.api.execute if job
+          job.execute if job
         end
       end
 

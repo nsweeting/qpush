@@ -14,7 +14,7 @@ module QPush
       def start
         until @done
           job = retrieve_job
-          job.api.setup if job
+          job.setup if job
         end
       end
 
@@ -29,7 +29,7 @@ module QPush
       # Performs a 'blocking pop' on our redis job list.
       #
       def retrieve_job
-        json = QPush.redis.with { |c| c.brpop(QPush.config.queue_namespace) }
+        json = QPush.redis.with { |c| c.brpop(QPush.keys.queue) }
         Job.new(JSON.parse(json.last))
       rescue => e
         raise ServerError, e.message
