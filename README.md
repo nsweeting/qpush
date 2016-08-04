@@ -21,7 +21,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install job_que
+    $ gem install qpush
 
 ## Usage
 
