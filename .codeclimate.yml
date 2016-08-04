@@ -22,3 +22,5 @@ ratings:
   - "**.rb"
 exclude_paths:
 - lib/qpush/web/public/**/*
+- lib/qpush/server/queue.rb
+- test/**/*
