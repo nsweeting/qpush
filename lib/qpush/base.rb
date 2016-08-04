@@ -1,10 +1,12 @@
-# Base
-# require 'byebug'
+# External
+require 'byebug'
 require 'securerandom'
 require 'json'
 require 'redis'
 require 'connection_pool'
-require 'qpush/config'
-require 'qpush/job'
-require 'qpush/redis'
+
+# QPush Base
 require 'qpush/version'
+require 'qpush/base/config'
+require 'qpush/base/job'
+require 'qpush/base/redis'

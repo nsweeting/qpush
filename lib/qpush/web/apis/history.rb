@@ -14,7 +14,7 @@ module QPush
         private
 
         def retrieve_jobs
-          @jobs = QPush.redis.with do |conn|
+          @jobs = Web.redis do |conn|
             conn.lrange(QPush.keys.history, 0, 10)
           end
         end

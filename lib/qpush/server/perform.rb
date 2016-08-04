@@ -6,7 +6,6 @@ module QPush
     class Perform
       def initialize
         @done = false
-        @lists = QPush.keys.perform_lists
       end
 
       # Starts our perform process. This will run until instructed to stop.
@@ -29,7 +28,7 @@ module QPush
       # Performs a 'blocking pop' on our redis job list.
       #
       def retrieve_job
-        json = QPush.redis.with { |c| c.brpop(@lists) }
+        json = Server.redis { |c| c.brpop(Server.keys.perform_list) }
         Job.new(JSON.parse(json.last))
       rescue => e
         raise ServerError, e.message

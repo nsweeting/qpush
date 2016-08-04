@@ -2,10 +2,6 @@ module QPush
   module Server
     module Apis
       class Morgue < Base
-        def initialize(job)
-          @job = job
-        end
-
         def call
           send_to_morgue
         end
@@ -13,9 +9,9 @@ module QPush
         private
 
         def send_to_morgue
-          QPush.redis.with do |conn|
-            conn.hincrby(QPush.keys.stats, 'dead', 1)
-            conn.lpush(QPush.keys.morgue, @job.to_json)
+          Server.redis do |conn|
+            conn.hincrby(Server.keys.stats, 'dead', 1)
+            conn.lpush(Server.keys.morgue, @job.to_json)
           end
         end
       end

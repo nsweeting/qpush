@@ -8,7 +8,7 @@ module QPush
         end
 
         def call
-          QPush.redis.with do |conn|
+          Web.redis do |conn|
             @conn = conn
             watch_delay { retrieve_delay }
           end

@@ -1,14 +1,24 @@
 module QPush
   module Server
     module Apis
+      # A Base class for all API classes.
+      #
       class Base
         def self.call(*args)
           api = new(*args)
           api.call
         end
+
+        def initialize(job)
+          @job = job
+        end
       end
     end
 
+    # The ApiWrapper provides simple wrapper functions for all the API
+    # classes available for jobs. This provides a single entry point to
+    # the API's for job objects.
+    #
     class ApiWrapper
       def initialize(job)
         @job = job

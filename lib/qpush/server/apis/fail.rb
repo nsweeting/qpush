@@ -23,11 +23,11 @@ module QPush
         end
 
         def stat_increment
-          QPush.redis.with { |c| c.hincrby(QPush.keys.stats, 'failed', 1) }
+          Server.redis { |c| c.hincrby(Server.keys.stats, 'failed', 1) }
         end
 
         def log_error
-          Server.log.err("Job FAILED | #{@job.klass} | #{@job.id} | #{@error.message}")
+          Server.log.err("Worker #{Server.worker.id} | Job FAILED | #{@job.klass} | #{@job.id} | #{@error.message}")
         end
 
         def update_history

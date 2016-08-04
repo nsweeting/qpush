@@ -14,7 +14,7 @@ module QPush
         private
 
         def retrieve_jobs
-          QPush.redis.with { |c| @jobs = c.smembers("#{QPush.keys.jobs}") }
+          Web.redis { |c| @jobs = c.smembers("#{QPush.keys.jobs}") }
         end
 
         def update_jobs

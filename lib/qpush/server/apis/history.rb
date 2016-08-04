@@ -17,9 +17,9 @@ module QPush
         private
 
         def update_history
-          QPush.redis.with do |c|
-            c.lpush(QPush.keys.history, to_json)
-            c.ltrim(QPush.keys.history, 0, 10)
+          Server.redis do |c|
+            c.lpush(Server.keys.history, to_json)
+            c.ltrim(Server.keys.history, 0, 10)
           end
         end
 

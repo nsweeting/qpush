@@ -2,10 +2,6 @@ module QPush
   module Server
     module Apis
       class Setup < Base
-        def initialize(job)
-          @job = job
-        end
-
         def call
           invalid_job && return unless @job.valid?
           setup_job
@@ -19,7 +15,7 @@ module QPush
         end
 
         def invalid_job
-          Server.log.err("Job INVALID | #{@job.klass} | #{@job.id} | #{@job.errors.full_messages.join(' ')}")
+          Server.log.err("Worker #{Server.worker.id} | Job INVALID | #{@job.klass} | #{@job.id} | #{@job.errors.full_messages.join(' ')}")
         end
       end
     end

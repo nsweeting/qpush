@@ -37,7 +37,7 @@ By providing a path to a configuration file, we can setup QPush with plain old r
 
 ```ruby
 # QPush server configuration
-QPush.configure do |config|
+QPush::Server.configure do |config|
   # Your redis server url and number of connections to provide
   config.redis_url = ENV['REDIS_URL']
   config.redis_pool = 10
@@ -48,13 +48,13 @@ Once the QPush server is running, it will begin processing any queued jobs based
 
 #### The Client
 
-Before we can add jobs to our server, we must first ensure our client has the same connection to our Redis server. We can setup our configuration in the same manner as above.
+Before we can add jobs to our server, we must first ensure our client has the same connection to our Redis server. We can setup our configuration in a similar manner as above.
 
 ```ruby
 require 'qpush'
 
 # QPush client configuration
-QPush.configure do |config|
+QPush::Client.configure do |config|
   # Your redis server url and number of connections to provide
   config.redis_url = ENV['REDIS_URL']
   config.redis_pool = 10
@@ -121,7 +121,7 @@ Although QPush is designed to independent in its operation, it still provides ac
 require 'pg'
 
 # QPush database configuration
-QPush.configure do |config|
+QPush::Server.configure do |config|
   # Redis and additional config omitted
   # ....
   # ....

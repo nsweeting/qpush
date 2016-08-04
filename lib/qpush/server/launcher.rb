@@ -27,7 +27,7 @@ module QPush
       #
       def setup_options
         parser = OptionParser.new do |o|
-          o.banner = 'Usage: bundle exec bin/QPush [options]'
+          o.banner = 'Usage: bundle exec qpush-server [options]'
 
           o.on('-c', '--config PATH', 'Load PATH for config file') do |arg|
             load(arg)
@@ -42,11 +42,11 @@ module QPush
       # Requires all base jobs as well as user jobs.
       #
       def setup_jobs
-        Loader.call
+        JobLoader.call
       end
 
       def boot_manager
-        manager = Manager.new(QPush.config.manager_options)
+        manager = Manager.new(Server.config.workers)
         manager.start
       end
     end

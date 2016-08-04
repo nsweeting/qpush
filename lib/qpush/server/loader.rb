@@ -3,18 +3,18 @@ module QPush
     # The Loader will 'require' all jobs within the users job folder.
     # The job folder is specified in the config.
     #
-    class Loader
+    class JobLoader
       # Provides a shortend caller.
       #
       def self.call
-        jobs = Loader.new
-        jobs.call
+        loader = new
+        loader.call
       end
 
       # Entrypoint to load all jobs.
       #
       def call
-        remove_old
+        flush_jobs
         load_jobs
       end
 
@@ -22,14 +22,14 @@ module QPush
 
       # Removes old jobs from the redis job list.
       #
-      def remove_old
-        QPush.redis.with { |c| c.del(QPush.keys.jobs) }
+      def flush_jobs
+        Server.redis { |c| c.del(QPush::Base::KEY + ':jobs') }
       end
 
       # Requires user jobs that are specified from the config.
       #
       def load_jobs
-        Dir[Dir.pwd + "#{QPush.config.jobs_path}/**/*.rb"].each do |file|
+        Dir[Dir.pwd + "#{Server.config.jobs_path}/**/*.rb"].each do |file|
           require file
         end
       end

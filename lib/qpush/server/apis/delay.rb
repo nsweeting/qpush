@@ -1,6 +1,8 @@
 module QPush
   module Server
     module Apis
+      # The Delay API will take a job and add it to the delay sorted set.
+      #
       class Delay < Base
         def initialize(job, type)
           @job = job
@@ -15,9 +17,9 @@ module QPush
         private
 
         def delay_job
-          QPush.redis.with do |conn|
-            conn.hincrby(QPush.keys.stats, @stat, 1)
-            conn.zadd(QPush.keys.delay, @time, @job.to_json)
+          Server.redis do |conn|
+            conn.hincrby(Server.keys.stats, @stat, 1)
+            conn.zadd(Server.keys.delay, @time, @job.to_json)
           end
         end
 

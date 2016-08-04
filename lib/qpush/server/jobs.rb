@@ -1,5 +1,15 @@
 module QPush
   module Server
+    module JobRegister
+      def included(base)
+        _register_job(base)
+      end
+
+      def _register_job(base)
+        Server.redis { |c| c.sadd(QPush::Base::KEY + ':jobs', base.name) }
+      end
+    end
+
     module JobHelpers
       def mark_success
         @failed = false
@@ -46,11 +56,12 @@ module QPush
       end
     end
 
-    class Job < QPush::Job::Base
+    class Job < QPush::Base::Job
       extend Forwardable
 
       include QPush::Server::JobHelpers
       include ObjectValidator::Validate
+
 
       def initialize(options)
         super

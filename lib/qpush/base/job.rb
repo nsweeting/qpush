@@ -1,23 +1,13 @@
 module QPush
   class << self
     def job(options)
-      job = Job::ClientWrapper.new(options)
+      job = Client::Job.new(options)
       job.queue
     end
   end
 
-  module Job
-    class << self
-      def included(base)
-        _register_job(base)
-      end
-
-      def _register_job(base)
-        QPush.redis.with { |c| c.sadd(QPush.keys.jobs, base.name) }
-      end
-    end
-
-    class Base
+  module Base
+    class Job
       attr_accessor :klass, :id, :priority, :created_at, :start_at,
                     :cron, :retry_max, :total_success, :total_fail,
                     :run_time, :namespace
@@ -68,16 +58,7 @@ module QPush
           total_fail: 0,
           total_success: 0,
           failed: false,
-          namespace: QPush.config.namespace }
-      end
-    end
-
-    class ClientWrapper < QPush::Job::Base
-      def queue
-        QPush.redis.with do |conn|
-          conn.hincrby("qpush:v1:#{@namespace}:stats", 'queued', 1)
-          conn.lpush("qpush:v1:#{@namespace}:queue", to_json)
-        end
+          namespace: 'default' }
       end
     end
   end

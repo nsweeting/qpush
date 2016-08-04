@@ -2,10 +2,6 @@ module QPush
   module Server
     module Apis
       class Success < Base
-        def initialize(job)
-          @job = job
-        end
-
         def call
           update_job
           stat_increment
@@ -21,13 +17,13 @@ module QPush
         end
 
         def stat_increment
-          QPush.redis.with do |c|
-            c.hincrby(QPush.keys.stats, 'success', 1)
+          Server.redis do |c|
+            c.hincrby(Server.keys.stats, 'success', 1)
           end
         end
 
         def log_success
-          Server.log.info("Job SUCCESS | #{@job.klass} with ID: #{@job.id} | #{@job.run_time}")
+          Server.log.info("Worker #{Server.worker.id} | Job SUCCESS | #{@job.klass} with ID: #{@job.id} | #{@job.run_time}")
         end
 
         def update_history

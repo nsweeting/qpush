@@ -1,2 +1,2 @@
-# Base
-require 'qpush/base'
+# QPush Client Base
+require 'qpush/client'

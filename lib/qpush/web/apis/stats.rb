@@ -28,7 +28,7 @@ module QPush
         private
 
         def retrieve_stats
-          @stats = QPush.redis.with do |conn|
+          @stats = Web.redis do |conn|
             conn.hgetall(QPush.keys.stats)
           end
         end
@@ -48,7 +48,7 @@ module QPush
         end
 
         def calculate_current
-          QPush.redis.with do |c|
+          Web.redis do |c|
             QPush.keys.perform_lists.collect { |list| c.llen(list) }.reduce(:+)
           end
         end

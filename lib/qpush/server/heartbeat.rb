@@ -1,6 +1,6 @@
 module QPush
   module Server
-    # The Heartbeat worker periodically updates the heart namespace.
+    # The Heartbeat worker periodically updates the heart key.
     # The key is set with an expiry. This helps to indicate if the QPush server
     # is currently active.
     #
@@ -9,11 +9,11 @@ module QPush
         @done = false
       end
 
-      # Starts our perform process. This will run until instructed to stop.
+      # Starts our heartbeat process. This will run until instructed to stop.
       #
       def start
         until @done
-          QPush.redis.with { |c| c.setex(QPush.keys.heart, 30, true) }
+          Server.redis { |c| c.setex(Server.keys.heart, 30, true) }
           sleep 15
         end
       end

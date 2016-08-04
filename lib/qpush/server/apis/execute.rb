@@ -2,10 +2,6 @@ module QPush
   module Server
     module Apis
       class Execute < Base
-        def initialize(job)
-          @job = job
-        end
-
         def call
           measure_run_time { job_object.call }
           Success.call(@job)

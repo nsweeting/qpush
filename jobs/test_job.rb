@@ -1,5 +1,5 @@
 class TestJob
-  include QPush::Job
+  include QPush::Server::JobRegister
 
   def call
     puts 'Hello from TestJob'

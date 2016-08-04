@@ -1,8 +1,6 @@
 module QPush
   module Jobs
     class QueueDelayed
-      include QPush::Job
-
       attr_accessor :id, :score
 
       def initialize(options)

@@ -44,14 +44,6 @@ module QPush
           crons = Apis::Crons.new(s, c)
           crons.call.to_json
         end
-
-
-
-        def all_delays
-          QPush.redis.with do |conn|
-            conn.zrange(QPush.keys.delay, 0, -1, with_scores: true)
-          end
-        end
       end
     end
   end
