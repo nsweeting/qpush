@@ -1,16 +1,24 @@
-languages:
-   Ruby: true
-   JavaScript: false
-   Python: false
-   PHP: false
 engines:
   rubocop:
     enabled: true
-  coffeelint:
+    checks:
+      Rubocop/Metrics/ClassLength:
+        enabled: false
+  golint:
     enabled: true
   eslint:
     enabled: true
   csslint:
     enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - ruby
+        #mass_threshold: 30
+ratings:
+  paths:
+  - lib/**
+  - "**.rb"
 exclude_paths:
 - lib/qpush/web/public/**/*
