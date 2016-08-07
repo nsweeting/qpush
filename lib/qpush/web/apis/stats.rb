@@ -29,7 +29,7 @@ module QPush
 
         def retrieve_stats
           @stats = Web.redis do |conn|
-            conn.hgetall(QPush.keys.stats)
+            conn.hgetall(Web.keys.stats)
           end
         end
 
@@ -49,7 +49,7 @@ module QPush
 
         def calculate_current
           Web.redis do |c|
-            QPush.keys.perform_lists.collect { |list| c.llen(list) }.reduce(:+)
+            Web.keys.perform_list.collect { |list| c.llen(list) }.reduce(:+)
           end
         end
       end

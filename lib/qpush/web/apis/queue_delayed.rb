@@ -17,13 +17,13 @@ module QPush
         private
 
         def retrieve_delay
-          delays = @conn.zrangebyscore(QPush.keys.delay, @score, @score)
+          delays = @conn.zrangebyscore(Web.keys.delay, @score, @score)
           delays.each
 
         # Performs a watch on our delay list
         #
         def watch_delay
-          @conn.watch(QPush.keys.delay) do
+          @conn.watch(Web.keys.delay) do
             yield if block_given?
           end
         end

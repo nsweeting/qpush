@@ -17,7 +17,7 @@ module QPush
 
         def retrieve_delays
           @jobs = Web.redis do |conn|
-            conn.zrange(QPush.keys.delay, 0, -1, with_scores: true)
+            conn.zrange(Web.keys.delay, 0, -1, with_scores: true)
           end
         end
 

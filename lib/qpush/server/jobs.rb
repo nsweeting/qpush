@@ -1,12 +1,14 @@
 module QPush
   module Server
     module JobRegister
-      def included(base)
-        _register_job(base)
-      end
+      class << self
+        def included(base)
+          _register_job(base)
+        end
 
-      def _register_job(base)
-        Server.redis { |c| c.sadd(QPush::Base::KEY + ':jobs', base.name) }
+        def _register_job(base)
+          Server.redis { |c| c.sadd(QPush::Base::KEY + ':jobs', base.name) }
+        end
       end
     end
 

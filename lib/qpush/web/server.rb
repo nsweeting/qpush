@@ -1,18 +1,18 @@
 module QPush
   module Web
     class Server < Sinatra::Base
-      #set :public_folder, File.expand_path(File.dirname(__FILE__)) + '/public'
+      set :public_folder, File.expand_path(File.dirname(__FILE__)) + '/public'
 
       before do
-        #pass if request.path_info == '/'
+        pass if request.path_info == '/'
         content_type :json
         headers 'Access-Control-Allow-Origin' => '*',
                 'Access-Control-Allow-Methods' => ['OPTIONS', 'GET', 'POST']
       end
 
-      #get '/' do
-        #File.read(File.join(settings.public_folder, 'index.html'))
-      #end
+      get '/' do
+        File.read(File.join(settings.public_folder, 'index.html'))
+      end
 
       get '/stats' do
         Get.stats
