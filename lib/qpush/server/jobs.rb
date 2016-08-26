@@ -7,12 +7,19 @@ module QPush
         end
 
         def _register_job(base)
-          Server.redis { |c| c.sadd(QPush::Base::KEY + ':jobs', base.name) }
+          Server.redis { |c| c.sadd("#{QPush::Base::KEY}:jobs", base.name) }
         end
       end
     end
 
-    module JobHelpers
+    class Job < QPush::Base::Job
+      include QPush::Server::ApiWrapper
+      include ObjectValidator::Validate
+
+      def initialize(options)
+        super
+      end
+
       def mark_success
         @failed = false
         @total_success += 1
@@ -56,22 +63,6 @@ module QPush
       def retry_at
         Time.now.to_i + ((@total_fail**4) + 15 + (rand(30) * (@total_fail + 1)))
       end
-    end
-
-    class Job < QPush::Base::Job
-      extend Forwardable
-
-      include QPush::Server::JobHelpers
-      include ObjectValidator::Validate
-
-
-      def initialize(options)
-        super
-        @api = ApiWrapper.new(self)
-      end
-
-      def_delegators :@api, :queue, :execute, :perform,
-                     :delay, :retry, :morgue, :setup
     end
 
     class JobValidator

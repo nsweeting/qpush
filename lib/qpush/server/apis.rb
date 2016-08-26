@@ -15,41 +15,37 @@ module QPush
       end
     end
 
-    # The ApiWrapper provides simple wrapper functions for all the API
+    # The ApiWrapper provides simple functions for all the API
     # classes available for jobs. This provides a single entry point to
     # the API's for job objects.
     #
-    class ApiWrapper
-      def initialize(job)
-        @job = job
-      end
-
+    module ApiWrapper
       def queue
-        Apis::Queue.call(@job)
+        Apis::Queue.call(self)
       end
 
       def perform
-        Apis::Perform.call(@job)
+        Apis::Perform.call(self)
       end
 
       def execute
-        Apis::Execute.call(@job)
+        Apis::Execute.call(self)
       end
 
       def delay
-        Apis::Delay.call(@job, :delay)
+        Apis::Delay.call(self, :delay)
       end
 
       def retry
-        Apis::Delay.call(@job, :retry)
+        Apis::Delay.call(self, :retry)
       end
 
       def morgue
-        Apis::Morgue.call(@job)
+        Apis::Morgue.call(self)
       end
 
       def setup
-        Apis::Setup.call(@job)
+        Apis::Setup.call(self)
       end
     end
   end
