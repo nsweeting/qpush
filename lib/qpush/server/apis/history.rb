@@ -18,8 +18,8 @@ module QPush
 
         def update_history
           Server.redis do |c|
-            c.lpush(Server.keys.history, to_json)
-            c.ltrim(Server.keys.history, 0, 10)
+            c.lpush(Server.keys[:history], to_json)
+            c.ltrim(Server.keys[:history], 0, 10)
           end
         end
 

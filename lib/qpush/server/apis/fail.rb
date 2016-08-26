@@ -23,7 +23,7 @@ module QPush
         end
 
         def stat_increment
-          Server.redis { |c| c.hincrby(Server.keys.stats, 'failed', 1) }
+          Server.redis { |c| c.hincrby(Server.keys[:stats], 'failed', 1) }
         end
 
         def log_error

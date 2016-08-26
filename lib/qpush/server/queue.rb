@@ -29,7 +29,7 @@ module QPush
       # Performs a 'blocking pop' on our redis job list.
       #
       def retrieve_job
-        json = Server.redis { |c| c.brpop(Server.keys.queue) }
+        json = Server.redis { |c| c.brpop(Server.keys[:queue]) }
         Job.new(JSON.parse(json.last))
       rescue => e
         raise ServerError, e.message

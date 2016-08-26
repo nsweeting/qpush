@@ -17,7 +17,7 @@ module QPush
 
         def retrieve_morgue
           @morgue = Web.redis do |conn|
-            conn.lrange(Web.keys.morgue, @start, @start + @count)
+            conn.lrange(Web.keys[:morgue], @start, @start + @count)
           end
         end
 

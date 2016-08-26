@@ -15,7 +15,7 @@ module QPush
 
         def retrieve_jobs
           @jobs = Web.redis do |conn|
-            conn.lrange(Web.keys.history, 0, 10)
+            conn.lrange(Web.keys[:history], 0, 10)
           end
         end
 

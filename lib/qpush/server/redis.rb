@@ -13,7 +13,7 @@ module QPush
       end
     end
 
-    class RedisKeys
+    module RedisKeys
       KEYS = [:delay,
               :queue,
               :perform,
@@ -23,25 +23,11 @@ module QPush
               :history,
               :morgue]
 
-      attr_reader :delay, :queue, :perform, :stats, :heart,
-                  :crons, :history, :morgue
-
-      def initialize(options)
-        @namespace = options[:namespace] || 'default'
-        @priorities = options[:priorities] || 5
-        build_keyspaces
-      end
-
-      def perform_list
-        @perform_list ||= (1..@priorities).collect { |num| "#{perform}:#{num}" }
-      end
-
-      private
-
-      def build_keyspaces
-        KEYS.each do |key|
-          instance_variable_set("@#{key}", "#{QPush::Base::KEY}:#{@namespace}:#{key}")
-        end
+      def self.build(namespace, priorities)
+        name = "#{QPush::Base::KEY}:#{namespace}"
+        keys = Hash[KEYS.collect { |key| [key, "#{name}:#{key}"] }]
+        keys[:perform_list] = (1..5).collect { |num| "#{keys[:perform]}:#{num}" }
+        keys
       end
     end
   end

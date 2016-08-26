@@ -13,7 +13,7 @@ module QPush
       #
       def start
         until @done
-          Server.redis { |c| c.setex(Server.keys.heart, 30, true) }
+          Server.redis { |c| c.setex(Server.keys[:heart], 30, true) }
           sleep 15
         end
       end

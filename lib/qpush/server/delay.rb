@@ -34,7 +34,7 @@ module QPush
       # If any are found, begin to update them.
       #
       def retrieve_delays
-        delays = @conn.zrangebyscore(Server.keys.delay, 0, Time.now.to_i)
+        delays = @conn.zrangebyscore(Server.keys[:delay], 0, Time.now.to_i)
         delays.any? ? update_delays(delays) : @conn.unwatch
       end
 
@@ -42,7 +42,7 @@ module QPush
       #
       def update_delays(delays)
         @conn.multi do |multi|
-          multi.zrem(Server.keys.delay, delays)
+          multi.zrem(Server.keys[:delay], delays)
           delays.each { |job| perform_job(job) }
         end
       end
@@ -59,7 +59,7 @@ module QPush
       # Performs a watch on our delay list
       #
       def watch_delay
-        @conn.watch(Server.keys.delay) do
+        @conn.watch(Server.keys[:delay]) do
           yield if block_given?
         end
       end

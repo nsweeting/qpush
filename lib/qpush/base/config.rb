@@ -11,7 +11,7 @@ module QPush
           yield(config)
         end
 
-        def reset_
+        def reset
           @config = nil
           @redis_pool = nil
         end

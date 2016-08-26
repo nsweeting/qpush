@@ -10,8 +10,8 @@ module QPush
 
         def perform_job
           Server.redis do |conn|
-            conn.hincrby(Server.keys.stats, 'performed', 1)
-            conn.lpush("#{Server.keys.perform}:#{@job.priority}", @job.to_json)
+            conn.hincrby(Server.keys[:stats], 'performed', 1)
+            conn.lpush("#{Server.keys[:perform]}:#{@job.priority}", @job.to_json)
           end
         end
       end

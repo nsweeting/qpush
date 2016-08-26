@@ -18,8 +18,8 @@ module QPush
 
         def delay_job
           Server.redis do |conn|
-            conn.hincrby(Server.keys.stats, @stat, 1)
-            conn.zadd(Server.keys.delay, @time, @job.to_json)
+            conn.hincrby(Server.keys[:stats], @stat, 1)
+            conn.zadd(Server.keys[:delay], @time, @job.to_json)
           end
         end
 

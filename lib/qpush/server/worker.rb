@@ -97,7 +97,7 @@ module QPush
       end
 
       def assign_globals
-        Server.keys = RedisKeys.new(@config.for_keys)
+        Server.keys = RedisKeys.build(@config.namespace, @config.priorities)
         Server.worker = self
       end
 
