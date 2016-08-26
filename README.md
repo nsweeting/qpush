@@ -1,4 +1,4 @@
-#<img src="https://s21.postimg.org/hs6j985vr/logo.png" alt="Drawing" width="37"/> QPush
+#<img src="https://s21.postimg.org/85ce7g93b/qpush.png" alt="Drawing" width="340"/>
 [![Code Climate](https://codeclimate.com/github/nsweeting/qpush/badges/gpa.svg)](https://codeclimate.com/github/nsweeting/qpush)
 
 Fast and simple job queue microservice for Ruby. **Please consider it under development at the moment.**
