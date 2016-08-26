@@ -8,6 +8,12 @@ module QPush
       def config
         @config ||= Config.new
       end
+
+      def build_worker
+        worker = WorkerConfig.new
+        yield worker
+        worker
+      end
     end
 
     class WorkerConfig
