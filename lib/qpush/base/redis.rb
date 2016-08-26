@@ -29,7 +29,7 @@ module QPush
         def build_keys(namespace, priorities)
           name = "#{QPush::Base::KEY}:#{namespace}"
           keys = Hash[QPush::Base::SUB_KEYS.collect { |key| [key, "#{name}:#{key}"] }]
-          keys[:perform_list] = (1..5).collect { |num| "#{keys[:perform]}:#{num}" }
+          keys[:perform_list] = (1..priorities).collect { |num| "#{keys[:perform]}:#{num}" }
           keys
         end
 
