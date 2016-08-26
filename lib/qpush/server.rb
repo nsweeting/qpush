@@ -3,6 +3,7 @@ require 'sequel'
 require 'object_validator'
 require 'parse-cron'
 require 'forwardable'
+require 'logger'
 
 # QPush Base
 require 'qpush/base'

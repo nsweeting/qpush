@@ -1,5 +1,3 @@
-require 'logger'
-
 module QPush
   module Server
     class << self

@@ -81,7 +81,7 @@ module QPush
                                 msg: 'could not be connected with' }
       validates :configs, with: { proc: proc { |m| m.configs.count > 0 },
                                   msg: 'were not defined' }
-      validates :configs, with: { proc: proc { |m| m.configs.each { |c| c.is_a?(WorkerConfig) } },
+      validates :configs, with: { proc: proc { |m| m.configs.all? { |x| x.is_a?(WorkerConfig) } },
                                   msg: 'are not valid WorkerConfig objects' }
     end
   end
