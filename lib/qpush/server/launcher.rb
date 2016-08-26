@@ -7,11 +7,12 @@ module QPush
         @argv = argv
       end
 
-      # Parses commmand line options and starts the Manager object
+      # Provides the main entrypoint for starting a QPush server.
       #
       def start
         start_message
         setup_options
+        validate!
         setup_jobs
         boot_manager
       end
@@ -39,12 +40,21 @@ module QPush
         parser.parse!(@argv)
       end
 
+      # Validates our server and worker configuration.
+      #
+      def validate!
+        Server.config.validate!
+        Server.config.workers.each { |w| w.validate! }
+      end
+
       # Requires all base jobs as well as user jobs.
       #
       def setup_jobs
         JobLoader.call
       end
 
+      # Boots our manager
+      #
       def boot_manager
         manager = Manager.new(Server.config.workers)
         manager.start

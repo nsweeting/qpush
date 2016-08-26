@@ -4,37 +4,16 @@ module QPush
     include QPush::Base::RedisHelper
 
     class << self
-      attr_accessor :worker, :keys
+      attr_accessor :keys
 
       def config
         @config ||= Config.new
       end
-
-      def build_worker
-        worker = WorkerConfig.new
-        yield worker
-        worker
-      end
-    end
-
-    class WorkerConfig
-      DEFAULTS = {
-        namespace: 'default',
-        priorities: 5,
-        queue_threads: 2,
-        perform_threads: 2,
-        delay_threads: 1 }.freeze
-
-      attr_accessor :perform_threads, :queue_threads, :delay_threads,
-                    :namespace, :priorities
-
-      def initialize(options = {})
-        options = DEFAULTS.merge(options)
-        options.each { |key, value| send("#{key}=", value) }
-      end
     end
 
     class Config < QPush::Base::Config
+      include ObjectValidator::Validate
+
       SERVER_DEFAULTS = {
         database_url: ENV['DATABASE_URL'],
         database_pool: 10,
@@ -47,6 +26,24 @@ module QPush
         super
         SERVER_DEFAULTS.each { |key, value| send("#{key}=", value) }
       end
+
+      def validate!
+        return if valid?
+        fail ServerError, errors.full_messages.join(' ')
+      end
+    end
+
+    class ConfigValidator
+      include ObjectValidator::Validator
+
+      validates :redis, with: { proc: proc { Server.redis { |c| c.ping && c.quit } },
+                                msg: 'could not be connected with' }
+      validates :workers, with: { proc: proc { |c| c.workers.is_a?(Array) && c.workers.count > 0 },
+                                  msg: 'is not a valid Array of WorkerConfigs' }
+      validates :configs, with: { proc: proc { |c| c.workers.all? { |w| w.is_a?(WorkerConfig) } },
+                                  msg: 'are not valid WorkerConfig objects' }
+      validates :jobs_path, with: { proc: proc { |c| Dir.exist?(Dir.pwd + Server.config.jobs_path) },
+                                    msg: 'is not a valid directory' }
     end
   end
 end

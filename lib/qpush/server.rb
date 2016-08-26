@@ -2,7 +2,6 @@
 require 'sequel'
 require 'object_validator'
 require 'parse-cron'
-require 'forwardable'
 require 'logger'
 
 # QPush Base
@@ -10,6 +9,7 @@ require 'qpush/base'
 
 # Qpush Server Base
 require 'qpush/server/apis'
+require 'qpush/server/worker'
 require 'qpush/server/config'
 require 'qpush/server/database'
 require 'qpush/server/delay'
@@ -22,7 +22,6 @@ require 'qpush/server/logger'
 require 'qpush/server/manager'
 require 'qpush/server/perform'
 require 'qpush/server/queue'
-require 'qpush/server/worker'
 
 # QPush Server Apis
 require 'qpush/server/apis/delay'

@@ -1,19 +1,21 @@
-
 module QPush
   module Server
-    # The Worker manages our workers - Queue, Delay, Perform and Heartbeat.
-    # Each of these workers is alloted a number of threads. Each worker
+    class << self
+      attr_accessor :worker
+
+      def build_worker
+        worker = WorkerConfig.new
+        yield worker
+        worker
+      end
+    end
+    # The Worker manages our actions - Queue, Delay, Perform and Heartbeat.
+    # Each of these actions is alloted a number of threads. Each action
     # object maintains control of these threads through the aptly named start
     # and shutdown methods.
     #
     class Worker
-      extend Forwardable
-      include ObjectValidator::Validate
-
       attr_reader :config, :pid, :id
-
-      def_delegators :@config, :perform_threads, :delay_threads, :queue_threads,
-                     :priorities, :base_threads, :namespace
 
       def initialize(id, config)
         @id = id
@@ -27,11 +29,10 @@ module QPush
       # Starts our new worker.
       #
       def start
-        validate!
         assign_globals
         register_space
         start_message
-        build_threads
+        build_actions
         start_threads
       end
 
@@ -45,57 +46,8 @@ module QPush
 
       private
 
-      # Forks the worker and creates the actual threads (@threads) for
-      # our Queue and Retry objects. We then start them and join them to the
-      # main process.
+      # Assign the globals that are required for our worker to function.
       #
-      def start_threads
-        @actions.each do |action|
-          @threads << Thread.new { action.start }
-        end
-        @threads.map(&:join)
-      end
-
-      # Instantiates our Queue, Perform, Delay and Heartbeat objects based on
-      # the number of threads specified for each process type. We store these
-      # objects as an array in @actions.
-      #
-      def build_threads
-        base_threads.each do |thread|
-          thread[:count].times do
-            @actions << thread[:klass].new
-          end
-        end
-      end
-
-      def base_threads
-        [
-          { klass: Perform, count: perform_threads },
-          { klass: Queue, count: queue_threads },
-          { klass: Delay, count: delay_threads },
-          { klass: Heartbeat, count: 1 }
-        ]
-      end
-
-      # Information about the start process
-      #
-      def start_message
-        Server.log.info("* Worker #{@id} started | pid: #{@pid} | namespace: #{namespace}")
-      end
-
-      # Information about the shutdown process
-      #
-      def shutdown_message
-        Server.log.info("* Worker #{@id} shutdown | pid: #{@pid}")
-      end
-
-      # Validates our data before starting the worker.
-      #
-      def validate!
-        return if valid?
-        fail ServerError, errors.full_messages.join(' ')
-      end
-
       def assign_globals
         Server.keys = Server.build_keys(@config.namespace, @config.priorities)
         Server.worker = self
@@ -105,23 +57,86 @@ module QPush
       #
       def register_space
         Server.redis do |c|
-          c.sadd(QPush::Base::KEY + ':namespaces', namespace)
+          c.sadd("#{QPush::Base::KEY}:namespaces", @config.namespace)
         end
+      end
+
+      # Information about the start process
+      #
+      def start_message
+        Server.log.info("* Worker #{@id} started | pid: #{@pid} | namespace: #{@config.namespace}")
+      end
+
+      # Instantiates our Queue, Perform, Delay and Heartbeat objects based on
+      # the number of threads specified for each action type. We store these
+      # objects as an array in @actions.
+      #
+      def build_actions
+        base_actions.each do |action|
+          action[:count].times do
+            @actions << action[:klass].new
+          end
+        end
+      end
+
+      def base_actions
+        [
+          { klass: Perform, count: @config.perform_threads },
+          { klass: Queue, count: @config.queue_threads },
+          { klass: Delay, count: @config.delay_threads },
+          { klass: Heartbeat, count: 1 }
+        ]
+      end
+
+      # Creates threads for each of the action objects, We then start them and
+      # join them to the main process.
+      #
+      def start_threads
+        @actions.each do |action|
+          @threads << Thread.new { action.start }
+        end
+        @threads.map(&:join)
+      end
+
+      # Information about the shutdown process
+      #
+      def shutdown_message
+        Server.log.info("* Worker #{@id} shutdown | pid: #{@pid}")
       end
     end
 
-    # The WorkerValidator ensures the data for our worker is
-    # valid before attempting to use it.
-    #
-    class WorkerValidator
+    class WorkerConfig
+      include ObjectValidator::Validate
+
+      DEFAULTS = {
+        namespace: 'default',
+        priorities: 5,
+        queue_threads: 2,
+        perform_threads: 2,
+        delay_threads: 1 }.freeze
+
+      attr_accessor :perform_threads, :queue_threads, :delay_threads,
+                    :namespace, :priorities
+
+      def initialize(options = {})
+        options = DEFAULTS.merge(options)
+        options.each { |key, value| send("#{key}=", value) }
+      end
+
+      def validate!
+        return if valid?
+        fail ServerError, errors.full_messages.join(' ')
+      end
+    end
+
+    class WorkerConfigValidator
       include ObjectValidator::Validator
 
-      validates :config, type: QPush::Server::WorkerConfig
-      validates :perform_threads, type: Integer, greater_than: 0
-      validates :queue_threads, type: Integer, greater_than: 0
-      validates :delay_threads, type: Integer, greater_than: 0
       validates :namespace, type: String
-      validates :priorities, type: Integer, greater_than: 4
+      validates :priorities, greater_than: 4
+      validates :queue_threads, greater_than: 0
+      validates :perform_threads, greater_than: 0
+      validates :delay_threads, greater_than: 0
     end
   end
 end

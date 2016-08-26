@@ -4,8 +4,6 @@ module QPush
     # of them to start and shutdown.
     #
     class Manager
-      include ObjectValidator::Validate
-
       attr_accessor :configs
       attr_reader :forks
 
@@ -21,7 +19,6 @@ module QPush
       # sleep so that our Workers can do their thing.
       #
       def start
-        validate!
         start_messages
         flush_spaces
         create_workers
@@ -55,34 +52,12 @@ module QPush
         Server.log.info("* Worker count: #{@configs.count}")
       end
 
-      # Validates our data before starting our Workers. Also instantiates our
-      # connection pool by pinging Redis.
-      #
-      def validate!
-        return if valid?
-        fail ServerError, errors.full_messages.join(' ')
-      end
-
       # Removes the list of namespaces used by our server from Redis. This
       # prepares it for the new list that will be created by our workers.
       #
       def flush_spaces
-        Server.redis { |c| c.del(QPush::Base::KEY + ':namespaces') }
+        Server.redis { |c| c.del("#{QPush::Base::KEY}:namespaces") }
       end
-    end
-
-    # The ManagerValidator ensures the data for our manager is valid before
-    # attempting to start it.
-    #
-    class ManagerValidator
-      include ObjectValidator::Validator
-
-      validates :redis, with: { proc: proc { Server.redis { |c| c.ping && c.quit } },
-                                msg: 'could not be connected with' }
-      validates :configs, with: { proc: proc { |m| m.configs.count > 0 },
-                                  msg: 'were not defined' }
-      validates :configs, with: { proc: proc { |m| m.configs.all? { |x| x.is_a?(WorkerConfig) } },
-                                  msg: 'are not valid WorkerConfig objects' }
     end
   end
 end
