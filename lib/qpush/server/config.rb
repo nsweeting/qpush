@@ -42,7 +42,7 @@ module QPush
                                   msg: 'is not a valid Array of WorkerConfigs' }
       validates :configs, with: { proc: proc { |c| c.workers.all? { |w| w.is_a?(WorkerConfig) } },
                                   msg: 'are not valid WorkerConfig objects' }
-      validates :jobs_path, with: { proc: proc { |c| Dir.exist?(Dir.pwd + Server.config.jobs_path) },
+      validates :jobs_path, with: { proc: proc { |c| Dir.exist?(Dir.pwd + c.jobs_path) },
                                     msg: 'is not a valid directory' }
     end
   end
