@@ -21,7 +21,6 @@ require 'qpush/server/logger'
 require 'qpush/server/manager'
 require 'qpush/server/perform'
 require 'qpush/server/queue'
-require 'qpush/server/redis'
 require 'qpush/server/worker'
 
 # QPush Server Apis

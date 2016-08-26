@@ -1,6 +1,7 @@
 module QPush
   module Server
     include QPush::Base::ConfigHelper
+    include QPush::Base::RedisHelper
 
     class << self
       attr_accessor :worker, :keys
@@ -30,10 +31,6 @@ module QPush
       def initialize(options = {})
         options = DEFAULTS.merge(options)
         options.each { |key, value| send("#{key}=", value) }
-      end
-
-      def for_keys
-        { namespace: @namespace, priorities: @priorities }
       end
     end
 

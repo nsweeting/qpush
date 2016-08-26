@@ -3,6 +3,7 @@ module QPush
     def job(options)
       job = Client::Job.new(options)
       job.queue
+      job
     end
   end
 

@@ -1,14 +1,11 @@
 module QPush
   module Web
     include QPush::Base::ConfigHelper
+    include QPush::Base::RedisHelper
 
     class << self
       def config
         @config ||= Config.new
-      end
-
-      def keys
-        @keys ||= QPush::Web::RedisKeys.new
       end
     end
 

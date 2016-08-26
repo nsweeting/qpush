@@ -7,7 +7,6 @@ require 'qpush/base'
 # Web Base
 require 'qpush/web/config'
 require 'qpush/web/get'
-require 'qpush/web/redis'
 require 'qpush/web/server'
 
 # Web Apis
