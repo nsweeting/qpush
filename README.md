@@ -27,7 +27,7 @@ Or install it yourself as:
 
 Before starting, ensure you have a functioning Redis server available.
 
-#### The Server
+### The Server
 
 In order to process queued jobs, we run the QPush server. This is a separate service beyond your web application (Rails, Sinatra, etc). To start the server simply type the following in your console.
 
@@ -46,7 +46,7 @@ end
 
 Once the QPush server is running, it will begin processing any queued jobs based on priority.
 
-#### The Client
+### The Client
 
 Before we can add jobs to our server, we must first ensure our client has the same connection to our Redis server. We can setup our configuration in a similar manner as above.
 
@@ -75,7 +75,7 @@ Example::Job.new(example: 'Job').call
 
 At a minimum, we must provide the job with a 'klass'. There are many more options that we can provide to the job though - [all of which can be viewed here](https://github.com/nsweeting/qpush/wiki/Options-for-Jobs).
 
-#### Building Jobs
+### Building Jobs
 
 Jobs are simply plain old ruby objects that contain a 'call' method. If you provide a hash for the 'args' of the job, the job will be initialized with them. Below is an example of a simple mailing job utilizing the 'mail' gem.
 
@@ -100,11 +100,11 @@ mail_options = { to: 'person@example.com', from: 'admin@test.com', subject: 'Hel
 QPush.job(klass: 'MailJob', args: mail_options)
 ```
 
-#### Failed Jobs
+### Failed Jobs
 
 Jobs that raise an error will be sent to the retry queue. As a default, they are set to attempt a maximum of 10 retries. Each failed attempt creates a longer delay for subsequent attempts. The job will permanently fail once the max retries has been hit.
 
-#### Cron Jobs
+### Cron Jobs
 
 QPush supports cron jobs. All you have to do is include a cron expression with your job. For example, the following would perform our job everyday at 4AM UTC.
 
@@ -112,7 +112,7 @@ QPush supports cron jobs. All you have to do is include a cron expression with y
 QPush.job(klass: 'Example::Job', args: { example: 'Job' }, cron: '0 4 * * *')
 ```
 
-#### Relational Databases
+### Relational Databases
 
 Although QPush is designed to independent in its operation, it still provides access to relational databases via Sequel. You can read more about [how to use Sequel here](https://github.com/jeremyevans/sequel). Suffice to say, its quite easy. We first will need to add the required information to our configuration:
 
