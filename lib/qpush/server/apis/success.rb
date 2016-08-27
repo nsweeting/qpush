@@ -17,9 +17,7 @@ module QPush
         end
 
         def stat_increment
-          Server.redis do |c|
-            c.hincrby(Server.keys[:stats], 'success', 1)
-          end
+          Server.redis { |c| c.hincrby(Server.keys[:stats], 'success', 1) }
         end
 
         def log_success

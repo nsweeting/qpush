@@ -10,8 +10,8 @@ module QPush
         private
 
         def setup_job
-          Perform.call(@job) if @job.perform_job?
-          Delay.call(@job, :delay) if @job.delay_job?
+          @job.perform if @job.perform_job?
+          @job.delay if @job.delay_job?
         end
 
         def invalid_job
