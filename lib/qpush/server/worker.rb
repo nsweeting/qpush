@@ -9,6 +9,7 @@ module QPush
         worker
       end
     end
+
     # The Worker manages our actions - Queue, Delay, Perform and Heartbeat.
     # Each of these actions is alloted a number of threads. Each action
     # object maintains control of these threads through the aptly named start
