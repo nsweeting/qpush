@@ -1,14 +1,22 @@
 module QPush
-  module Server
-    module JobRegister
-      class << self
-        def included(base)
-          _register_job(base)
-        end
+  module Job
+    class << self
+      def included(base)
+        _register_job(base)
+        Server.log.info("* Job loaded: #{base.name}")
+      end
 
-        def _register_job(base)
-          Server.redis { |c| c.sadd("#{QPush::Base::KEY}:jobs", base.name) }
-        end
+      def _register_job(base)
+        Server.jobs << base.name
+        Server.redis { |c| c.sadd("#{QPush::Base::KEY}:jobs", base.name) }
+      end
+    end
+  end
+
+  module Server
+    class << self
+      def jobs
+        @jobs ||= []
       end
     end
 
@@ -69,7 +77,7 @@ module QPush
       include ObjectValidator::Validator
 
       validates :klass,
-                with: { proc: proc { |j| Object.const_defined?(j.klass) },
+                with: { proc: proc { |j| Server.jobs.include?(j.klass) },
                         msg: 'has not been defined' }
       validates :cron,
                 with: { proc: proc { |j| j.cron.empty? ? true : CronParser.new(j.cron) },

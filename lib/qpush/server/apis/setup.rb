@@ -3,8 +3,7 @@ module QPush
     module Apis
       class Setup < Base
         def call
-          invalid_job && return unless @job.valid?
-          setup_job
+          @job.valid? ? setup_job : invalid_job
         end
 
         private

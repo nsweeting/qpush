@@ -1,5 +1,5 @@
 class FailJob
-  include QPush::Server::JobRegister
+  include QPush::Job
 
   def initialize(options)
     @option = options
