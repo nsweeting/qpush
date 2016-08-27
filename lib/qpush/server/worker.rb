@@ -3,6 +3,9 @@ module QPush
     class << self
       attr_accessor :worker
 
+      # A convenience method used to create new WorkerConfig objects for use
+      # in our server configuration.
+      #
       def build_worker
         worker = WorkerConfig.new
         yield worker
