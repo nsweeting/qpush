@@ -1,5 +1,5 @@
 #<center><img src="https://s21.postimg.org/85ce7g93b/qpush.png" alt="Drawing" width="250"/></center>
-[![Code Climate](https://codeclimate.com/github/nsweeting/qpush/badges/gpa.svg)](https://codeclimate.com/github/nsweeting/qpush)[![Gem Version](https://badge.fury.io/rb/qpush.svg)](https://badge.fury.io/rb/qpush)
+[![Code Climate](https://codeclimate.com/github/nsweeting/qpush/badges/gpa.svg)](https://codeclimate.com/github/nsweeting/qpush) [![Gem Version](https://badge.fury.io/rb/qpush.svg)](https://badge.fury.io/rb/qpush)
 
 Fast and simple job queue microservice for Ruby. **Please consider it under development at the moment.**
 
