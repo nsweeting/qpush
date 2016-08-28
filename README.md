@@ -77,12 +77,14 @@ At a minimum, we must provide the job with a 'klass'. There are many more option
 
 #### Building Jobs
 
-Jobs are simply plain old ruby objects that contain a 'call' method. If you provide a hash for the 'args' of the job, the job will be initialized with them. Below is an example of a simple mailing job utilizing the 'mail' gem.
+Jobs are simply ruby objects that include the QPush::Job module and contain a 'call' method. If you provide a hash for the 'args' of the job, the job will be initialized with them. Below is an example of a simple mailing job utilizing the 'mail' gem.
 
 ```ruby
 require 'mail'
 
 class MailJob
+  include QPush::Job
+
   def initialize(options = {})
     @mail = Mail.new(options)
   end
