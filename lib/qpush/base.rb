@@ -1,5 +1,4 @@
 # External
-require 'byebug'
 require 'securerandom'
 require 'json'
 require 'redis'
